@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using menuEditor.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,5 +13,6 @@ namespace menuEditor.Data
             : base(options)
         {
         }
+        public DbSet<MenuItem> menuItems { get; set; }
     }
 }
