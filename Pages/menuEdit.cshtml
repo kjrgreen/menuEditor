@@ -7,18 +7,24 @@
 @functions{
     async Task recursivelyDisplayMenuItems(menuEditor.Data.Models.MenuItem menuItem)
     {
-        <li>@menuItem.Text - @menuItem.URL - 
+        @:<li>
+            @:Text: @menuItem.Text
+            @:-
+            @:URL: @menuItem.URL
+            @:-
             <a asp-page="./menuItemScaffolded" asp-route-id="@menuItem.Id"> Add child</a>
-        </li>
-        if (menuItem.Children != null)
-        {
-            foreach (var child in menuItem.Children)
+            @:-
+            <a asp-page="./menuEdit" asp-route-id="@menuItem.Id"> Delete this element</a>
+            if (menuItem.Children != null)
             {
-                @:<ul>
-                    await recursivelyDisplayMenuItems(child);
-                @:</ul>
+                foreach (var child in menuItem.Children)
+                {
+                    @:<ul>
+                        await recursivelyDisplayMenuItems(child);
+                    @:</ul>
+                }
             }
-        }
+        @:</li>
     }
 }
 
