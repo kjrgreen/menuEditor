@@ -4,6 +4,28 @@
     ViewData["Title"] = "Edit menu";
 }
 
+@functions{
+    void recursivelyDisplayMenuItems(menuEditor.Data.Models.MenuItem menuItem)
+    {
+        <li>@menuItem.Text - @menuItem.URL</li>
+        if (menuItem.Children != null)
+        {
+            foreach (var child in menuItem.Children)
+            {
+                @:<ul>
+                    recursivelyDisplayMenuItems(child);
+                @:</ul>
+            }
+        }
+    }
+}
+
+
 <div class="text-center">
     <a asp-page="./menuItemScaffolded">Create new top-level menu item</a>
+    @{ foreach (var item in Model.MenuItems)
+        {
+            recursivelyDisplayMenuItems(item);
+        }
+    }
 </div>
