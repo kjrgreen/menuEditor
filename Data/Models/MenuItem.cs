@@ -7,6 +7,7 @@ namespace menuEditor.Data.Models
         public int Id { get; set; }
         public string Text { get; set; }
         public string URL { get; set; }
-        public List<MenuItem> Children { get; set; }
+        public int? ParentId { get; set; }
+        public virtual List<MenuItem> Children { get; set; }
     }
 }

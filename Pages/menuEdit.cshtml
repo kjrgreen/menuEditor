@@ -25,6 +25,7 @@
     <a asp-page="./menuItemScaffolded">Create new top-level menu item</a>
     @{ foreach (var item in Model.MenuItems)
         {
+            if (item.ParentId != null) continue; //Terrible hack to compensate for issues with the model.
             recursivelyDisplayMenuItems(item);
         }
     }
