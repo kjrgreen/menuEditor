@@ -23,8 +23,19 @@ namespace menuEditor.Pages
             _context = context;
         }
 
-        public async Task OnGetAsync()
-        {
+        public async Task OnGetAsync(int? id)
+        {    
+            if (id != null)
+            {
+                MenuItem menuItem = await _context.menuItems.FindAsync(id);
+
+                if (menuItem != null)
+                {
+                    _context.menuItems.Remove(menuItem);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             MenuItems = await _context.menuItems.ToListAsync();
         }
     }
