@@ -5,15 +5,17 @@
 }
 
 @functions{
-    void recursivelyDisplayMenuItems(menuEditor.Data.Models.MenuItem menuItem)
+    async Task recursivelyDisplayMenuItems(menuEditor.Data.Models.MenuItem menuItem)
     {
-        <li>@menuItem.Text - @menuItem.URL</li>
+        <li>@menuItem.Text - @menuItem.URL - 
+            <a asp-page="./menuItemScaffolded" asp-route-id="@menuItem.Id"> Add child</a>
+        </li>
         if (menuItem.Children != null)
         {
             foreach (var child in menuItem.Children)
             {
                 @:<ul>
-                    recursivelyDisplayMenuItems(child);
+                    await recursivelyDisplayMenuItems(child);
                 @:</ul>
             }
         }
@@ -26,7 +28,7 @@
     @{ foreach (var item in Model.MenuItems)
         {
             if (item.ParentId != null) continue; //Terrible hack to compensate for issues with the model.
-            recursivelyDisplayMenuItems(item);
+            await recursivelyDisplayMenuItems(item);
         }
     }
 </div>

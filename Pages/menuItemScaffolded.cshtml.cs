@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using menuEditor.Data;
 using menuEditor.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace menuEditor.Pages
 {
@@ -29,16 +30,51 @@ namespace menuEditor.Pages
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
-            _context.menuItems.Add(MenuItem);
-            await _context.SaveChangesAsync();
 
-            return RedirectToPage("./menuEdit");
+            if (id != null)
+            {
+                //Add child
+                MenuItem parentItem = await _context.menuItems.FirstOrDefaultAsync(m => m.Id == id);
+                MenuItem.ParentId = parentItem.Id;
+                if (parentItem.Children == null) parentItem.Children = new List<MenuItem>();
+                parentItem.Children.Add(MenuItem);
+                _context.Attach(parentItem).State = EntityState.Modified;
+                try {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MenuItemExists(MenuItem.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToPage("./menuEdit");
+            }
+            else
+            {
+                //Add top level item
+                _context.menuItems.Add(MenuItem);
+                await _context.SaveChangesAsync();
+
+                return RedirectToPage("./menuEdit");
+            }
+
+        }
+
+        private bool MenuItemExists(int id)
+        {
+            return _context.menuItems.Any(e => e.Id == id);
         }
     }
 }
