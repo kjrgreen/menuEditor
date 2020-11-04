@@ -4,11 +4,36 @@
     ViewData["Title"] = "Home page";
 }
 
+@functions{
+    async Task recursivelyDisplayMenuItems(menuEditor.Data.Models.MenuItem menuItem)
+    {
+        @:<li>
+            <a href="@menuItem.URL">@menuItem.Text</a>
+            if (menuItem.Children != null)
+            {
+                foreach (var child in menuItem.Children)
+                {
+                    @:<ul>
+                        await recursivelyDisplayMenuItems(child);
+                    @:</ul>
+                }
+            }
+        @:</li>
+    }
+}
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Please log in to edit the menu</p>
     @if (User.Identity.IsAuthenticated)
     {
         <a asp-page="./menuEdit">Edit the menu</a>
+    }
+
+    @{ foreach (var item in Model.MenuItems)
+        {
+            if (item.ParentId != null) continue; //Terrible hack to compensate for issues with the model.
+            await recursivelyDisplayMenuItems(item);
+        }
     }
 </div>
